@@ -1,13 +1,13 @@
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 
 import Main from "./pages/main.js";
+import Beacon from "./pages/beacon.js";
 
-const RootStack = createStackNavigator({
-    Home: {
-      screen: Main
-    }
-  });
+const Routes = createAppContainer(
+  createStackNavigator({
+    Lista: Main,
+    Beacon: Beacon,
+  })
+);
 
-const App = createAppContainer(RootStack);
-
-export default App;
+export default Routes;

@@ -6,7 +6,7 @@ import axios from 'axios';
 export default class Main extends Component{
 
   static navigationOptions = {
-    title: "Lista de Beacons",
+    title: "Lista",
     data: []
   };
 
@@ -30,7 +30,12 @@ export default class Main extends Component{
   renderItem = ({ item }) => (
     <View style = {styles.beaconsContainer}>
       <Text style = {styles.beaconsNome}>{item.nome}</Text>
-      <TouchableOpacity style = {styles.beaconsButton} onPress = {() => {}}>
+      <TouchableOpacity
+        style = {styles.beaconsButton}
+        onPress = {() => {
+          this.props.navigation.navigate('Beacon');
+        }}
+      >
         <Text style = {styles.beaconsButtonText}>Exibir detalhes</Text>
       </TouchableOpacity>
     </View>
