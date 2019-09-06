@@ -18,7 +18,7 @@ export default class Main extends Component{
   }
 
   componentDidMount() {
-    axios.get('http://192.168.100.134:3000/api/list')
+    axios.get('http://179.106.206.182:3000/api/list')
     .then(response =>{
           this.setState({beacons: response.data})
     })
@@ -33,7 +33,7 @@ export default class Main extends Component{
       <TouchableOpacity
         style = {styles.beaconsButton}
         onPress = {() => {
-          this.props.navigation.navigate('Beacon');
+          this.props.navigation.navigate('Beacon', { beacon: item });
         }}
       >
         <Text style = {styles.beaconsButtonText}>Exibir detalhes</Text>
