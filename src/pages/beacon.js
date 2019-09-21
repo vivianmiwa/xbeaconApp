@@ -1,6 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet, Button, Linking} from 'react-native';
+import {View, Text, StyleSheet, Button, Linking, Platform} from 'react-native';
 import { WebView } from 'react-native-webview';
+import { DeviceEventEmitter } from 'react-native'
+import Beacons from 'react-native-beacons-manager'
 
 const Beacon = ({ navigation }) => (
   <View style = {styles.container}>
