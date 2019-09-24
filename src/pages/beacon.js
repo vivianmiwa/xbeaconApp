@@ -1,9 +1,5 @@
 import React from 'react';
-<<<<<<< HEAD
 import {View, Text, StyleSheet, Button, Linking, Platform, Image, SafeAreaView, ScrollView} from 'react-native';
-=======
-import {View, Text, StyleSheet, Button, Linking, Platform} from 'react-native';
->>>>>>> 373f8b3bca74bcbca441135665167a5632d7e485
 import { WebView } from 'react-native-webview';
 import { DeviceEventEmitter } from 'react-native'
 import Beacons from 'react-native-beacons-manager'
