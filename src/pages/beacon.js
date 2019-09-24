@@ -1,14 +1,22 @@
 import React from 'react';
-import {View, Text, StyleSheet, Button, Linking, Platform} from 'react-native';
+import {View, Text, StyleSheet, Button, Linking, Platform, Image, SafeAreaView, ScrollView} from 'react-native';
 import { WebView } from 'react-native-webview';
 import { DeviceEventEmitter } from 'react-native'
 import Beacons from 'react-native-beacons-manager'
 
 const Beacon = ({ navigation }) => (
   <View style = {styles.container}>
-    <Text style = {styles.titulo}>{navigation.state.params.beacon.textos[0].titulo}</Text>
-    <Text style = {styles.texto}>{navigation.state.params.beacon.textos[0].texto}</Text>
-    <Button title="Saiba mais" onPress={ ()=>{ Linking.openURL(navigation.state.params.beacon.links[0].url)}}/>
+    <Image
+      style = {styles.foto}
+      source = {{uri: navigation.state.params.beacon.arquivos_externos[0].url}}
+    />
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <Text style = {styles.titulo}>{navigation.state.params.beacon.textos[0].titulo}</Text>
+        <Text style = {styles.texto}>{navigation.state.params.beacon.textos[0].texto}</Text>
+        <Button title="Saiba mais" onPress={ ()=>{ Linking.openURL(navigation.state.params.beacon.links[0].url)}}/>
+      </ScrollView>
+    </SafeAreaView>
   </View>
 );
 
@@ -27,14 +35,19 @@ export default Beacon;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#FFF',
+  },
+
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 3,
   },
 
   titulo: {
-    fontSize: 18,
     flex: 1,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#333",
     padding: 20,
@@ -42,10 +55,21 @@ const styles = StyleSheet.create({
   },
 
   texto: {
-    flex: 1,
+    flex: 2,
     fontSize: 16,
     color: "#333",
     padding: 20,
+    backgroundColor: "#FFF"
+  },
+
+  foto: {
+    flex: 1,
+    marginHorizontal: 10,
+    marginRight: 10,
+    marginLeft: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 20,
     backgroundColor: "#FFF"
   }
 });
