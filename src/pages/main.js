@@ -32,7 +32,11 @@ export default class Main extends Component{
   }
 
   async componentDidMount() {
+<<<<<<< HEAD
     axios.get('http://179.106.206.209:3000/api/list')
+=======
+    axios.get('http://192.168.100.134:3000/api/list')
+>>>>>>> 373f8b3bca74bcbca441135665167a5632d7e485
     .then(response =>{
           this.setState({beacons: response.data})
     })
