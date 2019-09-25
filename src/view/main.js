@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, ToastAndroid} from "react-native";
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, ToastAndroid, AppState} from "react-native";
 import api from '../model/api.js';
 import axios from 'axios';
 import Beacons from 'react-native-beacons-manager'
@@ -29,20 +29,33 @@ export default class Main extends Component{
     beacons: [
       { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
     ],
+    beaconsAPI: [
+      { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
+    ],
+    update: [
+    ],
+    bluetoothSupport: '',
   }
 
-  async componentDidMount() {
-    axios.get('http://192.168.100.134:3000/api/list')
+  componentDidMount() {
+    axios.get('http://179.106.206.209:3000/api/list')
     .then(response =>{
-          this.setState({beacons: response.data})
+          this.setState({beaconsAPI: response.data})
     })
     .catch(error => {
       console.log(error);
     });
 
-    this.handlesOnAddIbeacon();
 
-    await Beacons.addIBeaconsDetection()
+
+    this.subs = [
+      this.props.navigation.addListener("willFocus", () => {
+        this.handlesOnAddIbeacon();
+        this.checkBluetoothSupport();
+      })
+    ];
+
+    Beacons.addIBeaconsDetection()
       .then(() => Beacons.addEddystoneUIDDetection())
       .then(() => Beacons.addEddystoneURLDetection())
       .then(() => Beacons.addEddystoneTLMDetection())
@@ -59,7 +72,7 @@ export default class Main extends Component{
     this.beaconsServiceDidConnect = Beacons.BeaconsEventEmitter.addListener(
       'beaconServiceConnected',
       () => {
-        //console.log('service connected');
+        console.log('service connected');
         this.startRangingAndMonitoring();
       },
     );
@@ -77,7 +90,7 @@ export default class Main extends Component{
         uuid: string,
         indetifier: string
       }) => {
-      //  console.log('BEACONS: ', response);
+        console.log('BEACONSssssssssssssssssssssssssss: ', response.identifier);
 
         response.beacons.forEach(beacon =>
           this.updateBeaconState(RANGING_SECTION_ID, {
@@ -88,15 +101,35 @@ export default class Main extends Component{
             proximity: beacon.proximity ? beacon.proximity : '',
             rssi: beacon.rssi ? beacon.rssi : '',
             distance: beacon.distance ? beacon.distance : '',
+
           }),
         );
         EventRegister.emit('UpdateHuntingEggs');
       },
     );
+
+    this.updateHuntingEggsListener = EventRegister.addEventListener('UpdateHuntingEggs', () => {
+      const state = this.state;
+      this.state.update = '';
+//      this.state.update = "";
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+this.state.beacons[0].data);
+      this.state.beacons[0].data.map(item =>{
+        axios.get('http://179.106.206.209:3000/api/beacons/'+item.minor)
+        .then(response =>{
+              this.setState({beaconsAPI: response.data})
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      });
+      //          this.state.update = this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
+
+      this.setState(state);
+    });
   }
 
   componentWillUnmount(){
-    this.handlesOnRemoveIbeacon("encerrado");
+    AppState.removeEventListener('change', this.handleAppStateChange);
     this.stopRangingAndMonitoring();
     // remove ranging event we registered at componentDidMount:
     this.beaconsDidRangeEvent.remove();
@@ -130,10 +163,23 @@ export default class Main extends Component{
           renderItem = {this.renderItem}
         />
 
-
+      <View>
+        <Text style={{fontFamily: 'Lobster_Regular', fontSize: 20}}>
+          {this.state.update}
+        </Text>
       </View>
     );
   }
+
+  renderEmpty = () => {
+    return (
+      <View>
+        <Text style={{fontFamily: 'Lobster_Regular', fontSize: 20}}>
+        {this.state.update}
+        </Text>
+      </View>
+    );
+  };
 
   updateBeaconState = (
     forSectionId: number = 0, // section identifier
@@ -220,7 +266,7 @@ export default class Main extends Component{
       await Beacons.removeIBeaconsDetection();
       await this.stopRangingAndMonitoring();
       ToastAndroid.showWithGravity(
-        `Caça ${callback}`,
+        `Caça ${callback}`, //pausada ou encerrada
         ToastAndroid.SHORT,
         ToastAndroid.CENTER
       );
@@ -232,6 +278,24 @@ export default class Main extends Component{
     }
   };
 
+  checkBluetoothSupport = async () => {
+    const state = this.state;
+    try {
+      const status = await Beacons.checkTransmissionSupported();
+      if(status === 'SUPPORTED'){
+        state.bluetoothSupport = "SUPPORTED";
+      }else if(status.contains('BLE')){
+        state.bluetoothSupport = "A versão bluetooth do seu aparelho não é compatível com a tecnologia BLE 4.0, o que pode ocasionar falhas no funcionamento correto da aplicação.";
+      }else if(status.contains('SDK')){
+        state.bluetoothSupport = "A versão bluetooth do seu aparelho não atende aos requisitos para essa aplicação, e isso pode ocasionar falhas no funcionamento correto da mesma.";
+      }else{
+        state.bluetoothSupport = "Impossível detectar as características do seu bluetooth, se o mesmo está ligado provavelmente não é compatível com a versão demandada para essa aplicação.";
+      }
+      this.setState(state);
+    } catch (error) {
+      //console.log(`Erro ao verificar compatibilidade do bluetooth: ${error}`)
+    }
+  }
 }
 
 const styles = StyleSheet.create({
