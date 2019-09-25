@@ -23,8 +23,8 @@ const Beacon = ({ navigation }) => (
 Beacon.navigationOptions = ({ navigation }) => ({
   title: navigation.state.params.beacon.nome,
   headerStyle: {
-  backgroundColor: '#008ae6',
-},
+    backgroundColor: '#008ae6',
+  },
   headerTintColor: '#fff',
   headerTitleStyle: {
     fontWeight: 'bold',

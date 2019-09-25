@@ -16,9 +16,11 @@
     "react-native-beacons-manager": "git+https://github.com/MacKentoch/react-native-beacons-manager.git",
     "react-native-event-listeners": "^1.0.3",
     "react-native-gesture-handler": "^1.4.1",
+    "react-native-reanimated": "^1.2.0",
     "react-native-webview": "^7.0.1",
     "react-navigation": "^4.0.5",
-    "react-navigation-stack": "^1.7.3"
+    "react-navigation-stack": "^1.7.3",
+    "react-navigation-tabs": "^2.5.5"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",

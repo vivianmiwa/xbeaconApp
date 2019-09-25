@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {View, Text, StyleSheet, FlatList, TouchableOpacity, ToastAndroid} from "react-native";
-import api from '../services/api';
+import api from '../model/api.js';
 import axios from 'axios';
 import Beacons from 'react-native-beacons-manager'
 import { EventRegister } from 'react-native-event-listeners';
@@ -11,7 +11,7 @@ const RANGING_SECTION_ID = 1;
 export default class Main extends Component{
 
   static navigationOptions = {
-    title: "Lista",
+    title: "Beacons",
     data: []
   };
 
