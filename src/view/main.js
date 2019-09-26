@@ -4,6 +4,7 @@ import api from '../model/api.js';
 import axios from 'axios';
 import Beacons from 'react-native-beacons-manager'
 import { EventRegister } from 'react-native-event-listeners';
+import Constants from 'expo-constants';
 
 const RANGING_TITLE = 'Found Beacons:';
 const RANGING_SECTION_ID = 1;
@@ -38,7 +39,7 @@ export default class Main extends Component{
   }
 
   componentDidMount() {
-    axios.get('http://179.106.206.209:3000/api/list')
+    axios.get('http://179.106.206.14:3000/api/list')
     .then(response =>{
           this.setState({beaconsAPI: response.data})
     })
@@ -114,7 +115,7 @@ export default class Main extends Component{
 //      this.state.update = "";
       console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"+this.state.beacons[0].data);
       this.state.beacons[0].data.map(item =>{
-        axios.get('http://179.106.206.209:3000/api/beacons/'+item.minor)
+        axios.get('http://179.106.206.14:3000/api/beacons/'+item.minor)
         .then(response =>{
               this.setState({beaconsAPI: response.data})
         })
