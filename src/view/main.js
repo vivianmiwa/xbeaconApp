@@ -4,7 +4,6 @@ import api from '../model/api.js';
 import axios from 'axios';
 import Beacons from 'react-native-beacons-manager'
 import { EventRegister } from 'react-native-event-listeners';
-import Constants from 'expo-constants';
 
 const RANGING_TITLE = 'Found Beacons:';
 const RANGING_SECTION_ID = 1;
@@ -158,19 +157,18 @@ export default class Main extends Component{
     return(
       <View style = {styles.container}>
         <FlatList
-          contentContainerStyle = {styles.list}
-          data = {this.state.beacons}
-          keyExtractor = { (item, index) => index.toString() } //função que recebe cada item e retorna seu id
-          renderItem = {this.renderItem}
+        contentContainerStyle = {styles.list}
+        data = {this.state.beacons}
+        keyExtractor = {(item, index) => index.toString()}
+        renderItem = {this.renderItem}
         />
-
-      <View>
-        <Text style={{fontFamily: 'Lobster_Regular', fontSize: 20}}>
+        <Text style = {{fontFamily: 'Lobster_Regular', fontSize: 20}}>
           {this.state.update}
         </Text>
       </View>
     );
   }
+
 
   renderEmpty = () => {
     return (
