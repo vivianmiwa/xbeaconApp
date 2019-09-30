@@ -44,7 +44,7 @@ export default class Main extends Component{
 
   componentDidMount() {
 
-    axios.get('http://192.168.100.134:3000/api/list')
+    axios.get('http://179.106.206.14:3000/api/list')
     .then(response =>{
           this.setState({beaconsAPI: response.data})
     })
@@ -96,7 +96,6 @@ export default class Main extends Component{
         uuid: string,
         indetifier: string
       }) => {
-
         response.beacons.forEach(beacon =>
           this.updateBeaconState(RANGING_SECTION_ID, {
             identifier: response.identifier,
@@ -120,17 +119,22 @@ export default class Main extends Component{
       const state = this.state;
       this.state.update = '';
 //      this.state.update = "";
-      console.log("beaconssssssss",this.state.beacons[0].data);
+      //console.log("beaconssssssss",this.state.beacons);
+
 
       this.state.beacons[0].data.map((item, index) => {
 
-        axios.get('http://192.168.100.134:3000/api/beacons/' + item.minor)
+        axios.get('http://179.106.206.14:3000/api/beacons/' + item.minor)
         .then(response =>{
-          if(response.status === 200 ){
-            this.state.parametros.id = response.data.id;
-            this.state.parametros.distance = item.distance.toFixed(2);
-            this.state.parametros.nome = response.data.nome;
-            this.state.filtros[response.data.id] = this.state.parametros;
+          //if(response.data.minor === item.id){
+          if(response.message != "Beacon nao encontrado"){
+            //if(item.minor === response.data.minor){
+              this.state.parametros.id = response.data.id;
+              this.state.parametros.distance = item.distance.toFixed(2);
+              this.state.parametros.nome = response.data.nome;
+              this.state.filtros[response.data.id] = this.state.parametros;
+
+          //  }
           }
 
         })
@@ -138,8 +142,8 @@ export default class Main extends Component{
           console.log("beacon n cadastrado");
         });
 
-
-       this.state.update = this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
+      //  this.state.update = this.state update + "beacon" + item.minor + ":\n" + item.distance.toFixed(2) + "m\n\n";
+    //   this.state.beacons= this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
 
       });
 
@@ -160,7 +164,7 @@ export default class Main extends Component{
 
 renderItem = ({ item, index }) => (
   <View style = {styles.beaconsContainer}>
-    <Text style = {styles.beaconsNome}>{item.nome}</Text>
+    <Text style = {styles.beaconsNome}>{this.state.parametros.nome}</Text>
     <TouchableOpacity
       style = {styles.beaconsButton}
       onPress = {() => {
@@ -225,7 +229,7 @@ renderItem = ({ item, index }) => (
       }
       return beacon;
     });
-    this.setState({ beacons: updatedBeacons });
+    this.setState({ beacons: updatedBeacons }); //mudei aqui, antes era beaconsAPI
   };
 
   startRangingAndMonitoring = async () => {
@@ -258,7 +262,7 @@ renderItem = ({ item, index }) => (
 
   handlesOnAddIbeacon = async () => {
     state = this.state;
-    this.state.beacons = [
+    this.state.beaconsAPI = [
       { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
     ];
     this.setState(state);
