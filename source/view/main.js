@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, ToastAndroid, AppState} from "react-native";
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, SafeAreaView, ToastAndroid, AppState} from "react-native";
 import api from '../model/api.js';
 import axios from 'axios';
 import Beacons from 'react-native-beacons-manager'
@@ -10,11 +10,6 @@ const RANGING_TITLE = 'Found Beacons:';
 const RANGING_SECTION_ID = 1;
 
 export default class Main extends Component{
-
-  static navigationOptions = {
-    title: "Beacons",
-    data: []
-  };
 
 
   constructor(props) {
@@ -35,16 +30,20 @@ export default class Main extends Component{
       { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
     ],
     update: [],
-    parametros: {id: '', distance: '', nome: ''}
+    parametros: {id: '', distance: '', proximity: '', nome: ''}
     ,
     filtros: [],
 
     bluetoothSupport: '',
   }
 
+  static navigationOptions = {
+    title: "Beacons próximos",
+  };
+
   componentDidMount() {
 
-    axios.get('http://179.106.206.14:3000/api/list')
+    axios.get('http://192.168.100.134:3000/api/list')
     .then(response =>{
           this.setState({beaconsAPI: response.data})
     })
@@ -120,21 +119,40 @@ export default class Main extends Component{
       this.state.update = '';
 //      this.state.update = "";
       //console.log("beaconssssssss",this.state.beacons);
+/*
+  render(){
+  return(
+    <View>
+      <Text>Olá</Text>
+      {this.state.beacons.map((beacon,index) => {
+        return(
+          <View key={index}>
+            <Text>Beacon</Text>
+            <Text>{beacon.nome}</Text>
+          </View>
+        )
+      })}
+    </View>
+  );
+}*/
+    this.state.beacons[0].data.map((item, index) => {
 
-
-      this.state.beacons[0].data.map((item, index) => {
-
-        axios.get('http://179.106.206.14:3000/api/beacons/' + item.minor)
-        .then(response =>{
-          //if(response.data.minor === item.id){
-          if(response.message != "Beacon nao encontrado"){
-            //if(item.minor === response.data.minor){
+      axios.get('http://192.168.100.134:3000/api/beacons/' + item.minor)
+      .then(response =>{
+        //if(response.data.minor === item.id){
+        if(response.message != "Beacon nao encontrado"){
+          //if(item.minor === response.data.minor){
+    //      if(this.state.filtros[response.data.id] != this.state.parametros){
               this.state.parametros.id = response.data.id;
               this.state.parametros.distance = item.distance.toFixed(2);
+              this.state.parametros.proximity = item.proximity;
               this.state.parametros.nome = response.data.nome;
-              this.state.filtros[response.data.id] = this.state.parametros;
-
+              this.item = this.state.parametros;
+              //console.log("STTTTTT", this.state.filtros);
+            //  console.log("OIE", response.data.id);
+             console.log("OIIII", item);
           //  }
+        //    }
           }
 
         })
@@ -143,7 +161,7 @@ export default class Main extends Component{
         });
 
       //  this.state.update = this.state update + "beacon" + item.minor + ":\n" + item.distance.toFixed(2) + "m\n\n";
-    //   this.state.beacons= this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
+    //  this.state.update= this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
 
       });
 
@@ -160,25 +178,26 @@ export default class Main extends Component{
     EventRegister.removeEventListener(this.restartVariablesListener);
     EventRegister.removeEventListener(this.updateHuntingEggsListener);
   //  EventRegister.removeEventListener(this.huntingEndListener);
-}
+  }
 
-renderItem = ({ item, index }) => (
-  <View style = {styles.beaconsContainer}>
-    <Text style = {styles.beaconsNome}>{this.state.parametros.nome}</Text>
-    <TouchableOpacity
-      style = {styles.beaconsButton}
-      onPress = {() => {
-        this.props.navigation.navigate('Beacon', { beacon: item });
-      }}
-    >
-      <Text style = {styles.beaconsButtonText}>Exibir detalhes</Text>
-    </TouchableOpacity>
-  </View>
-);
+  renderItem = ({ item, index }) => (
+    <View style = {styles.beaconsContainer}>
+      <Text style = {styles.beaconsNome}>{this.state.parametros.nome}</Text>
+      <Text style = {styles.beaconsDistancia}>{this.state.parametros.proximity}:   {this.state.parametros.distance}m</Text>
+      <TouchableOpacity
+        style = {styles.beaconsButton}
+        onPress = {() => {
+          this.props.navigation.navigate('Beacon', { beacon: item, index});
+        }}
+      >
+        <Text style = {styles.beaconsButtonText}>Exibir detalhes</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   render(){
    return(
-     <View style = {styles.container}>
+     <SafeAreaView style={styles.container}>
        <FlatList
        contentContainerStyle = {styles.list}
        data = {this.state.beacons}
@@ -188,7 +207,7 @@ renderItem = ({ item, index }) => (
        <Text style = {{fontFamily: 'Lobster_Regular', fontSize: 20}}>
          {this.state.update}
        </Text>
-     </View>
+    </SafeAreaView>
    );
   }
 
@@ -196,7 +215,7 @@ renderItem = ({ item, index }) => (
     return (
       <View>
         <Text style={{fontFamily: 'Lobster_Regular', fontSize: 20}}>
-        {this.state.update}
+        {this.state.update} //tava update
         </Text>
       </View>
     );
@@ -262,7 +281,7 @@ renderItem = ({ item, index }) => (
 
   handlesOnAddIbeacon = async () => {
     state = this.state;
-    this.state.beaconsAPI = [
+    this.state.beacons = [
       { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
     ];
     this.setState(state);
@@ -342,6 +361,11 @@ const styles = StyleSheet.create({
   beaconsNome: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#333"
+  },
+
+  beaconsDistancia: {
+    fontSize: 15,
     color: "#333"
   },
 

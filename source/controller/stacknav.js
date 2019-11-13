@@ -7,8 +7,12 @@ import Beacon from '../view/beacon.js';
 const StackNav = createAppContainer(
 
   createStackNavigator({
-    Main: Main,
-    Beacon: Beacon,
+    Main: {
+      screen: Main,
+    },
+    Beacon: {
+      screen: Beacon,
+    },
   }),
 );
 

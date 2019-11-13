@@ -3,6 +3,10 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
 
 export default class Home extends Component{
 
+  static navigationOptions = {
+    title: "Home",
+    data: []
+  };
   render(){
     return(
       <View style = {styles.container}>
