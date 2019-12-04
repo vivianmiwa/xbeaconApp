@@ -30,8 +30,7 @@ export default class Main extends Component{
       { key: 1, data: [], title: RANGING_TITLE, sectionId: RANGING_SECTION_ID },
     ],
     update: [],
-    parametros: {id: '', distance: '', proximity: '', nome: ''}
-    ,
+    parametros: [],
     filtros: [],
 
     bluetoothSupport: '',
@@ -135,37 +134,38 @@ export default class Main extends Component{
     </View>
   );
 }*/
-    this.state.beacons[0].data.map((item, index) => {
 
+  //  console.log("bbbbbbbb", this.state.beacons[0]);
+  //const updateParametros = "";
+    this.state.beacons[0].data.map((item, index) => {
       axios.get('http://192.168.100.134:3000/api/beacons/' + item.minor)
       .then(response =>{
         //if(response.data.minor === item.id){
         if(response.message != "Beacon nao encontrado"){
           //if(item.minor === response.data.minor){
-    //      if(this.state.filtros[response.data.id] != this.state.parametros){
-              this.state.parametros.id = response.data.id;
-              this.state.parametros.distance = item.distance.toFixed(2);
-              this.state.parametros.proximity = item.proximity;
-              this.state.parametros.nome = response.data.nome;
-              this.item = this.state.parametros;
+    //      if(this.state.filtros[response.data.id] != this.state.parametro){
+              this.updateParametroState(response.data.id, {
+                id : response.data.id,
+                distance : item.distance.toFixed(2),
+                proximity : item.proximity,
+                nome : response.data.nome
+              })
               //console.log("STTTTTT", this.state.filtros);
             //  console.log("OIE", response.data.id);
-             console.log("OIIII", item);
           //  }
         //    }
           }
 
         })
         .catch(error => {
-          console.log("beacon n cadastrado");
+          //console.log("beacon n cadastrado");
         });
 
       //  this.state.update = this.state update + "beacon" + item.minor + ":\n" + item.distance.toFixed(2) + "m\n\n";
     //  this.state.update= this.state.update + "distância do beacon "+ item.minor +":\n" + item.distance.toFixed(2) + " m\n\n";
 
       });
-
-      this.setState(state);
+    //  console.log("parametros:", this.state.parametros, "state::", state.parametros);
     });
   }
 
@@ -182,12 +182,13 @@ export default class Main extends Component{
 
   renderItem = ({ item, index }) => (
     <View style = {styles.beaconsContainer}>
-      <Text style = {styles.beaconsNome}>{this.state.parametros.nome}</Text>
-      <Text style = {styles.beaconsDistancia}>{this.state.parametros.proximity}:   {this.state.parametros.distance}m</Text>
+      <Text style = {styles.beaconsNome}>{item.nome}</Text>
+      <Text style = {styles.beaconsDistancia}>{item.proximity}:   {item.distance}m</Text>
       <TouchableOpacity
         style = {styles.beaconsButton}
         onPress = {() => {
-          this.props.navigation.navigate('Beacon', { beacon: item, index});
+          console.log(this.state.beaconsAPI);
+          this.props.navigation.navigate('Beacon', { beacon: this.state.beaconsAPI[this.state.parametros[index].id]});
         }}
       >
         <Text style = {styles.beaconsButtonText}>Exibir detalhes</Text>
@@ -200,7 +201,7 @@ export default class Main extends Component{
      <SafeAreaView style={styles.container}>
        <FlatList
        contentContainerStyle = {styles.list}
-       data = {this.state.beacons}
+       data = {this.state.parametros} //beaconsAPI
        keyExtractor = {(item, index) => index.toString()}
        renderItem = {this.renderItem}
        />
@@ -220,6 +221,44 @@ export default class Main extends Component{
       </View>
     );
   };
+
+  updateParametroState = (
+
+    forSectionId: number = 0, // section identifier
+    { id, proximity, distance, nome }, // beacon
+
+  ) => {
+    const { parametros } = this.state;
+    state = this.state;
+    const flag = false;
+    const updatedParametros = parametros.map(parametro => {
+      if (parametro.id === forSectionId) {
+        parametro.proximity = proximity;
+        parametro.distance = distance;
+        this.flag = true;
+        console.log("aaaaaaaaa",parametro);
+        return parametro;
+      }
+
+      console.log("cccccc",parametro);
+      this.flag = false;
+      return parametro;
+    });
+
+    if(!this.flag){
+    //  console.log("entrou ::::", id, proximity, distance, nome);
+      //parametros.filter(id => id != forSectionId);
+      parametros.push({id, proximity, distance, nome});
+      console.log("parametros true flag", parametros);
+      this.setState(this.parametros);
+
+    }else{
+
+      this.setState({ parametros: updatedParametros }); //mudei aqui, antes era beaconsAPI
+      console.log("parametrosssssss22223322ss", parametros);
+    }
+  };
+
 
   updateBeaconState = (
     forSectionId: number = 0, // section identifier
