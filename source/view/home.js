@@ -10,16 +10,16 @@ export default class Home extends Component{
   render(){
     return(
       <View style = {styles.container}>
-      <Text style = {styles.titulo}>App Beacons</Text>
-      <Image
-        style = {styles.image}
-        source = {{uri: 'http://eonbeacon.com/wp-content/uploads/2015/07/beacon_overview_big_update.png'}}
-      />
-      <TouchableOpacity
-        style = {styles.button}
-        onPress = {() => this.props.navigation.navigate('Main')}>
-        <Text style = {styles.buttonText}>Procurar beacons</Text>
-      </TouchableOpacity>
+        <Text style = {styles.titulo}>X-Beacon</Text>
+        <Image
+          style = {styles.image}
+          source = {{uri: 'http://eonbeacon.com/wp-content/uploads/2015/07/beacon_overview_big_update.png'}}
+        />
+        <TouchableOpacity
+          style = {styles.button}
+          onPress = {() => this.props.navigation.navigate('Main')}>
+          <Text style = {styles.buttonText}>Procurar beacons</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
   },
 
   titulo: {
-    marginHorizontal: 110,
+    marginHorizontal: 125,
     marginBottom: 70,
+    alignItems: 'center',
     color: '#DA552F',
     fontSize: 20,
     fontWeight: "bold"

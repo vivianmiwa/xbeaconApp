@@ -42,7 +42,7 @@ export default class Main extends Component{
 
   componentDidMount() {
 
-    axios.get('http://192.168.100.134:3000/api/list')
+    axios.get('http://179.106.206.148:3000/api/list')
     .then(response =>{
           this.setState({beaconsAPI: response.data})
     })
@@ -138,7 +138,7 @@ export default class Main extends Component{
   //  console.log("bbbbbbbb", this.state.beacons[0]);
   //const updateParametros = "";
     this.state.beacons[0].data.map((item, index) => {
-      axios.get('http://192.168.100.134:3000/api/beacons/' + item.minor)
+      axios.get('http://179.106.206.148:3000/api/beacons/' + item.minor)
       .then(response =>{
         //if(response.data.minor === item.id){
         if(response.message != "Beacon nao encontrado"){

@@ -5,7 +5,7 @@ axios.defaults.timeout = 30000;
 const getID = async (minor) => {
 
   try {
-    const response = await axios.get('http://192.168.100.134:3000/api/beacons/' + minor)
+    const response = await axios.get('http://179.106.206.148:3000/api/beacons/' + minor)
     let {status, data} = response.data;
     if(status === "success"){
       if(data.id != NULL){
